@@ -1,0 +1,6 @@
+# Ignoruj katalogi lokalne
+error_logs/
+produkcja/
+venv/
+
+
