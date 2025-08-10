@@ -9,6 +9,12 @@ import asyncio
 import platform
 import sys
 
+# HTML content is preserved as-is; no tag removal
+
+def process_data(data):
+    "Return data without modifications (preserve all fields, including HTML)"
+    return data
+
 def save_error_logs(start, end, not_found_errors, forbidden_errors, other_errors):
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     error_filename = f'error_logs_{start}_{end}_{timestamp}.txt'
@@ -75,7 +81,7 @@ def scrape_data(start, end, batch_size):
                 other_errors.append((url, str(data['errors'])))
                 continue
         else:
-            # Keep full API content without HTML stripping
+            data = process_data(data)
             accumulated_data.append(data)
             number_saved += 1
             
@@ -194,8 +200,8 @@ async def scrape_data_async(start, end, batch_size, concurrent_requests, rate_li
                     other_errors.append((base_url + str(i), str(data['errors'])))
                     continue
             else:
-                # Keep full API content without HTML stripping
-                accumulated_data.append((i, data))  # Store with index for sorting later
+                processed_data = process_data(data)
+                accumulated_data.append((i, processed_data))  # Store with index for sorting later
                 number_saved += 1
                 
                 # Show periodic status

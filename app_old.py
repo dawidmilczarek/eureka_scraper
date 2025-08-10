@@ -4,18 +4,11 @@ import json
 import time
 import os
 from datetime import datetime
-from bs4 import BeautifulSoup
 
-def remove_html_tags(text):
-    "Use BeautifulSoup to remove HTML tags from a string"
-    soup = BeautifulSoup(text, "html.parser")
-    return soup.get_text()
+# HTML content is preserved as-is; no tag removal
 
 def process_data(data):
-    "Modify data, removing HTML from 'TRESC_INTERESARIUSZ' if present"
-    for dictionary in data['dokument']['fields']:
-        if dictionary['key'] == 'TRESC_INTERESARIUSZ':
-            dictionary['value'] = remove_html_tags(dictionary['value'])
+    "Return data without modifications (preserve all fields, including HTML)"
     return data
 
 def save_error_logs(start, end, not_found_errors, forbidden_errors, other_errors):
