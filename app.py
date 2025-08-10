@@ -4,23 +4,10 @@ import json
 import time
 import os
 from datetime import datetime
-from bs4 import BeautifulSoup
 import aiohttp
 import asyncio
 import platform
 import sys
-
-def remove_html_tags(text):
-    "Use BeautifulSoup to remove HTML tags from a string"
-    soup = BeautifulSoup(text, "html.parser")
-    return soup.get_text()
-
-def process_data(data):
-    "Modify data, removing HTML from 'TRESC_INTERESARIUSZ' if present"
-    for dictionary in data['dokument']['fields']:
-        if dictionary['key'] == 'TRESC_INTERESARIUSZ':
-            dictionary['value'] = remove_html_tags(dictionary['value'])
-    return data
 
 def save_error_logs(start, end, not_found_errors, forbidden_errors, other_errors):
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
@@ -88,7 +75,7 @@ def scrape_data(start, end, batch_size):
                 other_errors.append((url, str(data['errors'])))
                 continue
         else:
-            data = process_data(data)
+            # Keep full API content without HTML stripping
             accumulated_data.append(data)
             number_saved += 1
             
@@ -207,8 +194,8 @@ async def scrape_data_async(start, end, batch_size, concurrent_requests, rate_li
                     other_errors.append((base_url + str(i), str(data['errors'])))
                     continue
             else:
-                processed_data = process_data(data)
-                accumulated_data.append((i, processed_data))  # Store with index for sorting later
+                # Keep full API content without HTML stripping
+                accumulated_data.append((i, data))  # Store with index for sorting later
                 number_saved += 1
                 
                 # Show periodic status
